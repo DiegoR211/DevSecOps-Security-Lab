@@ -1,0 +1,34 @@
+name: DevSecOps Pipeline - Trivy Security Scan
+
+# 1. ¿Cuándo se ejecuta esto? Cada vez que alguien sube código (push) a la rama principal (main).
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  security-scan:
+    name: Escaneo de Vulnerabilidades (Trivy)
+    runs-on: ubuntu-latest # El robot usará una máquina Ubuntu limpia para trabajar
+
+    steps:
+      - name: 📥 Descargar el código del repositorio
+        uses: actions/checkout@v3
+
+      - name: 🏗️ Construir la imagen Docker localmente
+        # Construimos el servidor de prueba usando tu archivo Dockerfile
+        run: docker build -t mi-servidor-web:local .
+
+      - name: 🕵️‍♂️ Escanear la imagen con Aqua Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'mi-servidor-web:local'
+          format: 'table'
+          
+          # ESTA ES LA CLAVE DE LA CIBERSEGURIDAD AUTOMATIZADA:
+          # exit-code: '1' significa que si Trivy encuentra fallos, el proceso EXPLOTA y se bloquea.
+          exit-code: '1' 
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          
+          # Solo queremos que salten las alarmas si los fallos son Críticos o Altos.
+          severity: 'CRITICAL,HIGH'
