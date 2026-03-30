@@ -27,7 +27,7 @@ jobs:
           # ESTA ES LA CLAVE DE LA CIBERSEGURIDAD AUTOMATIZADA:
           # exit-code: '1' significa que si Trivy encuentra fallos, el proceso EXPLOTA y se bloquea.
           exit-code: '1' 
-          ignore-unfixed: true
+          ignore-unfixed: false # Al ponerlo en false, mostrará todos los agujeros de seguridad
           vuln-type: 'os,library'
           
           # Solo queremos que salten las alarmas si los fallos son Críticos o Altos.
